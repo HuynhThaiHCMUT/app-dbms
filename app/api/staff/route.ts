@@ -6,17 +6,18 @@ export async function GET(req: NextRequest) {
     const query = req.nextUrl.searchParams.get("q") ?? "";
 
     //TODO: Get employee data from database
+    let data: StaffData;
 
     //return NextResponse.json(data);
 }
 
 export async function POST(req: NextRequest) {
     const client = await clientPromise;
-    const staff: NewStaffData = await req.json();
+    const staff: StaffData = await req.json();
 
     //TODO: Insert new employee to database
 
-    //let res: DatabaseResponse;
+    let res: DatabaseResponse;
 
     //TODO: Return response message
 
@@ -25,11 +26,11 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
     const client = await clientPromise;
-    const requestBody: PutStaffRequestBody = await req.json();
+    const requestBody: StaffData = await req.json();
 
     //TODO: Insert new employee to database
 
-    //let res: DatabaseResponse;
+    let res: DatabaseResponse;
 
     //TODO: Return response message
 
@@ -42,7 +43,7 @@ export async function DELETE(req: NextRequest) {
 
     //TODO: Delete an employee from database
 
-    //let res: DatabaseResponse;
+    let res: DatabaseResponse;
 
     //TODO: Return response message
     

@@ -41,7 +41,7 @@ function AddDialog() {
     }, [showAddDialog])
 
     useEffect(() => {
-        async function addStaff(req: NewStaffData) {
+        async function addStaff(req: StaffData) {
             let res = await fetch(`/api/staff`, {method: "POST", body: JSON.stringify(req)});
             if (!res.ok) setMessage("Internal server error")
             else {
@@ -58,7 +58,8 @@ function AddDialog() {
         };
         if (confirmed) {
             
-            let req: NewStaffData = {
+            let req: StaffData = {
+                id: 0,
                 fname: fname,
                 lname: lname,
                 role: role,
@@ -145,7 +146,6 @@ function AddDialog() {
 function EditDialog() {
     const {selectedStaff, showEditDialog, setShowEditDialog, updated, update} = useContext(Context);
 
-    const [id, setID] = useState(0);
     const [fname, setFName] = useState("");
     const [lname, setLName] = useState("");
     const [role, setRole] = useState("");
@@ -159,7 +159,6 @@ function EditDialog() {
 
     useEffect(() => {
         setMessage("");
-        setID(selectedStaff.id);
         setFName(selectedStaff.fname);
         setLName(selectedStaff.lname);
         setRole(selectedStaff.role);
@@ -170,7 +169,7 @@ function EditDialog() {
     }, [showEditDialog])
 
     useEffect(() => {
-        async function editStaff(req: PutStaffRequestBody) {
+        async function editStaff(req: StaffData) {
             let res = await fetch(`/api/staff`, {method: "PUT", body: JSON.stringify(req)});
             if (!res.ok) setMessage("Internal server error")
             else {
@@ -186,17 +185,15 @@ function EditDialog() {
             }
         };
         if (confirmed) {
-            let req: PutStaffRequestBody = {
-                key: selectedStaff.id,
-                body: {
-                    fname: fname,
-                    lname: lname,
-                    role: role,
-                    email: email,
-                    phone: phone,
-                    birthday: birthday,
-                    schedule: schedule,
-                }
+            let req: StaffData = {
+                id: selectedStaff.id,
+                fname: fname,
+                lname: lname,
+                role: role,
+                email: email,
+                phone: phone,
+                birthday: birthday,
+                schedule: schedule,
             } 
             editStaff(req);
             confirm(false);

@@ -67,7 +67,7 @@ export default function Home() {
             <button onClick={() => setShowFilter(true)}><FontAwesomeIcon icon={faFilter}/></button>
         </div>
         <div className={styles.home}>
-        {data.map((value: ProductData) => <DisplayItem item={value} key={value._id}/>)}
+        {data.map((value: ProductData) => <DisplayItem item={value} key={value.id}/>)}
         </div>
     </div>
 }
