@@ -46,7 +46,7 @@ export default function Staff() {
             type='search'
             value={q}
             onChange={(e) => {
-                setQ(e.target.value.replace(/[^A-Za-z0-9\s]/g, ""))
+                setQ(e.target.value)
             }}/>
             <button onClick={() => setShowAddDialog(true)}>Thêm nhân viên</button>
         </div>

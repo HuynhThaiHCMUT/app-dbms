@@ -57,7 +57,7 @@ export default function Sale() {
                 type='search'
                 value={q}
                 onChange={(e) => {
-                    setQ(e.target.value.replace(/[^A-Za-z0-9\s]/g, ""))
+                    setQ(e.target.value)
                 }}/>
             </div>
             <div className={styles.productTableDiv}>
