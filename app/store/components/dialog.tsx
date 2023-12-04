@@ -3,10 +3,8 @@
 import styles from './dialog.module.css'
 import { Context } from '../contextProvider'
 import { useContext, useEffect, useRef, useState } from 'react'
-import { DeleteResult, InsertOneResult, UpdateResult } from 'mongodb';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
-import Spinner from '@/app/components/spinner';
 
 function parseInt(s: string): number {
     return (s === "") ? 0 : Number.parseInt(s);
@@ -73,7 +71,6 @@ function AddDialog() {
     return <div className={showAddDialog ? styles.dialogBackground : styles.hidden} onMouseDown={() => setShowAddDialog(false)}>
         <div className={styles.editDialog} onMouseDown={(e) => e.stopPropagation()}>
             <h2>Thêm sản phẩm</h2>
-            <Spinner/>
             <p className={styles.message}>{message}</p>
             <p>ID</p>
             <input type='number'

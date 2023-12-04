@@ -1,0 +1,8 @@
+.stats {
+    flex: 1;
+    display: flex;
+    margin: 2rem;
+    padding: 2rem;
+    border: 0.1rem cornflowerblue solid;
+    border-radius: 2rem;
+}

@@ -40,27 +40,28 @@ type Invoice = {
 }
 
 type Schedule = {
-    weekDay: string,
-    start: string,
-    end: string
+    start: Date,
+    end: Date
 }
 
 type StaffData = {
-    _id: string,
     id: number,
-    name: string,
+    fname: string,
+    lname: string,
     role: string,
     email: string,
     phone: string,
+    birthday: Date,
     schedule: Schedule[]
 }
 
 type NewStaffData = {
-    id: number,
-    name: string,
+    fname: string,
+    lname: string,
     role: string,
     email: string,
     phone: string,
+    birthday: Date,
     schedule: Schedule[]
 }
 
