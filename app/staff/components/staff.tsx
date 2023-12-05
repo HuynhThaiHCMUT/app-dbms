@@ -3,12 +3,12 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './staff.module.css'
 import { useContext, useEffect } from 'react';
-import { faEye, faPen, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { AddDialog, DelDialog, EditDialog } from './dialog';
+import { faCalendar, faPen, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { AddDialog, DelDialog, EditDialog, SumDialog, ViewDialog } from './dialog';
 import { Context } from '../contextProvider';
 
 export default function Staff() {
-    const {q, setQ, data, setData, setShowViewDialog, setShowAddDialog, setShowEditDialog, setShowDelDialog, selectedStaff, select, updated, update} = useContext(Context);
+    const {q, setQ, data, setData, setShowSumDialog, setShowViewDialog, setShowAddDialog, setShowEditDialog, setShowDelDialog, selectedStaff, select, updated, update} = useContext(Context);
     useEffect(() => {
         async function getData() {
             let res = await fetch(`/api/staff?q=${q}`, {cache: "no-store"});
@@ -37,6 +37,8 @@ export default function Staff() {
     };
 
     return <div className={styles.staff}>
+        <SumDialog/>
+        <ViewDialog/>
         <AddDialog/>
         <EditDialog/>
         <DelDialog/>
@@ -49,6 +51,7 @@ export default function Staff() {
                 setQ(e.target.value)
             }}/>
             <button onClick={() => setShowAddDialog(true)}>Thêm nhân viên</button>
+            <button onClick={() => setShowSumDialog(true)}>Tổng giờ làm</button>
         </div>
         <div className={styles.tableDiv}>
             <table className={styles.table}>
@@ -76,7 +79,7 @@ export default function Staff() {
                         <td>{(new Date(Date.parse(value.birthday.toString()))).toLocaleDateString()}</td>
                         <td>
                             <button onClick={() => viewItem(value)}>
-                                <FontAwesomeIcon icon={faEye}/>
+                                <FontAwesomeIcon icon={faCalendar}/>
                             </button>
                             <button onClick={() => editItem(value)}>
                                 <FontAwesomeIcon icon={faPen}/>

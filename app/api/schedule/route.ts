@@ -5,7 +5,21 @@ export async function GET(req: NextRequest) {
     const client = await clientPromise;
 
     //TODO: Get employee data from database
-    //return NextResponse.json(data);
+    const request = client.request();
+
+    if (req.nextUrl.searchParams.has("start") && req.nextUrl.searchParams.has("end")) {
+        const start = req.nextUrl.searchParams.get("start");
+        const end = req.nextUrl.searchParams.get("end");
+        request.input("StartDate", sql.Date, start);
+        request.input("EndDate", sql.Date, end);
+        const data = (await request.execute("GetTotalWorkingHours")).recordset;
+        return NextResponse.json(data);
+    } else {
+        const id = req.nextUrl.searchParams.get("id") ?? "-1";
+        request.input("id", sql.Int, parseInt(id));
+        const data = (await request.query("SELECT start_hour AS startHour, end_hour AS endHour FROM Working_schedule WHERE uid = @id")).recordset;
+        return NextResponse.json(data);
+    }
 }
 
 export async function POST(req: NextRequest) {

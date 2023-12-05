@@ -15,9 +15,124 @@ function parseInt(s: string): number {
 
 function dateToISOString(date: Date) {
     return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString();
-  }
+}
 
-//TODO: Add view dialog, fix schedule view
+function SumDialog() {
+    const {showSumDialog, setShowSumDialog, updated, update} = useContext(Context);
+    const [start, setStart] = useState<Date | string>(new Date())
+    const [end, setEnd] = useState<Date | string>(new Date())
+    const [data, setData] = useState<SumHoursStaffData[]>([]);
+
+    useEffect(() => {
+        async function getData() {
+            let res = await fetch(`/api/schedule?start=${start}&end=${end}`);
+            if (res.ok) {
+                let list = await res.json();
+                setData(list);
+            }
+            else console.log("Failed to fetch data");
+        };
+        getData();
+    }, [start, end]);
+
+    return <div className={showSumDialog ? styles.dialogBackground : styles.hidden} onMouseDown={() => setShowSumDialog(false)}>
+        <div className={styles.editDialog} onMouseDown={(e) => e.stopPropagation()}>
+            <h2>Tính tổng giờ làm của nhân viên</h2>
+            <div className={styles.scheduleContainer}>
+                <div>
+                    <p>Từ ngày</p>
+                    <FlatPickr
+                    value={start} 
+                    onChange={([date]) => setStart(dateToISOString(date))}/>
+                </div>
+                <div>
+                    <p>Đến ngày</p>
+                    <FlatPickr
+                    value={end} 
+                    onChange={([date]) => setEnd(dateToISOString(date))}/>
+                </div>
+            </div>
+            <div className={styles.tableDiv}>
+                <table className={styles.table}>
+                    <thead className={styles.tableHeader}>
+                        <tr>
+                            <th className={styles.id}>ID</th>
+                            <th className={styles.lname}>Họ</th>
+                            <th className={styles.fname}>Tên</th>
+                            <th className={styles.role}>Chức vụ</th>
+                            <th className={styles.totalHours}>Tổng giờ</th>
+                        </tr>
+                    </thead>
+                    <tbody className={styles.tableBody}>
+                        {data.map((value: SumHoursStaffData) => 
+                        <tr key={value.id}>
+                            <td>{value.id}</td>
+                            <td>{value.lname}</td>
+                            <td>{value.fname}</td>
+                            <td>{value.role}</td>
+                            <td>{value.totalHours}</td>
+                        </tr>)}
+                    </tbody>
+                </table>
+            </div>
+            <div className={styles.buttonContainer}>
+                <button onClick={() => setShowSumDialog(false)}>OK</button>
+            </div>
+        </div>
+    </div>;
+}
+
+function ViewDialog() {
+    const {showViewDialog, setShowViewDialog, updated, update, selectedStaff} = useContext(Context);
+    const [data, setData] = useState<Schedule[]>([]);
+
+    useEffect(() => {
+        async function getSchedule() {
+            let res = await fetch(`/api/schedule?id=${selectedStaff.id}`);
+            if (res.ok) {
+                let schedule = await res.json();
+                setData(schedule);
+            }
+            else console.log("Failed to fetch data");
+        };
+        getSchedule();
+    }, [showViewDialog]);
+
+    return <div className={showViewDialog ? styles.dialogBackground : styles.hidden} onMouseDown={() => setShowViewDialog(false)}>
+        <div className={styles.editDialog} onMouseDown={(e) => e.stopPropagation()}>
+            <h2>Lịch làm việc của nhân viên</h2>
+            {data.map((value, index) => <div key={index} className={styles.scheduleContainer}>
+            <div>
+                <p>Bắt đầu</p>
+                <FlatPickr data-enable-time
+                value={value.startHour} 
+                /* onChange={([date]) => setSchedule(schedule.map((subValue, subIndex) => 
+                    (index === subIndex) ? {...subValue, startHourHour: date} : subValue))} *//>
+            </div>
+            <div>
+                <p>Kết thúc</p>
+                <FlatPickr data-enable-time
+                value={value.endHour} 
+                /* onChange={([date]) => setSchedule(schedule.map((subValue, subIndex) => 
+                    (index === subIndex) ? {...subValue, endHour: date} : subValue))} *//>
+            </div>
+            {/* <button onClick={() => setSchedule(schedule.filter((v, i) => (i != index)))}>
+                <FontAwesomeIcon icon={faXmark}/>
+            </button> */}
+            </div>)}
+            {/* <button onClick={() => setSchedule([...schedule, {
+                startHourHour: new Date(),
+                endHour: new Date(),
+            }])}>
+                <p>Thêm lịch làm việc</p>
+                <FontAwesomeIcon icon={faPlus}/>
+            </button> */}
+            <div className={styles.buttonContainer}>
+                <button onClick={() => setShowViewDialog(false)}>OK</button>
+            </div>
+        </div>
+    </div>;
+}
 
 function AddDialog() {
     const {showAddDialog, setShowAddDialog, updated, update} = useContext(Context);
@@ -115,24 +230,24 @@ function AddDialog() {
             <div>
                 <p>Bắt đầu</p>
                 <FlatPickr data-enable-time
-                value={value.start} 
+                value={value.startHourHour} 
                 onChange={([date]) => setSchedule(schedule.map((subValue, subIndex) => 
-                    (index === subIndex) ? {...subValue, start: date} : subValue))}/>
+                    (index === subIndex) ? {...subValue, startHourHour: date} : subValue))}/>
             </div>
             <div>
                 <p>Kết thúc</p>
                 <FlatPickr data-enable-time
-                value={value.end} 
+                value={value.endHour} 
                 onChange={([date]) => setSchedule(schedule.map((subValue, subIndex) => 
-                    (index === subIndex) ? {...subValue, end: date} : subValue))}/>
+                    (index === subIndex) ? {...subValue, endHour: date} : subValue))}/>
             </div>
             <button onClick={() => setSchedule(schedule.filter((v, i) => (i != index)))}>
                 <FontAwesomeIcon icon={faXmark}/>
             </button>
             </div>)}
             <button onClick={() => setSchedule([...schedule, {
-                start: new Date(),
-                end: new Date(),
+                startHour: new Date(),
+                endHour: new Date(),
             }])}>
                 <p>Thêm lịch làm việc</p>
                 <FontAwesomeIcon icon={faPlus}/>
@@ -242,23 +357,23 @@ function EditDialog() {
             {/* {schedule.map((value, index) => <div key={index} className={styles.scheduleContainer}>
                 <div>
                     <p>Bắt đầu</p>
-                    <FlatPickr value={value.start} 
+                    <FlatPickr value={value.startHour} 
                     onChange={([date]) => setSchedule(schedule.map((subValue, subIndex) => 
-                        (index === subIndex) ? {...subValue, start: date} : subValue))}/>
+                        (index === subIndex) ? {...subValue, startHour: date} : subValue))}/>
                 </div>
                 <div>
                     <p>Kết thúc</p>
-                    <FlatPickr value={value.end} 
+                    <FlatPickr value={value.endHour} 
                     onChange={([date]) => setSchedule(schedule.map((subValue, subIndex) => 
-                        (index === subIndex) ? {...subValue, end: date} : subValue))}/>
+                        (index === subIndex) ? {...subValue, endHour: date} : subValue))}/>
                 </div>
                 <button onClick={() => setSchedule(schedule.filter((v, i) => (i != index)))}>
                     <FontAwesomeIcon icon={faXmark}/>
                 </button>
             </div>)}
             <button onClick={() => setSchedule([...schedule, {
-                start: new Date(),
-                end: new Date(),
+                startHour: new Date(),
+                endHour: new Date(),
             }])}>
                 <p>Thêm lịch làm việc</p>
                 <FontAwesomeIcon icon={faPlus}/>
@@ -319,4 +434,4 @@ function DelDialog() {
     </div>;
 }
 
-export {AddDialog, EditDialog, DelDialog};
+export {SumDialog, ViewDialog, AddDialog, EditDialog, DelDialog};

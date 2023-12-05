@@ -151,6 +151,59 @@
     align-self: center;
 }
 
+.table {
+    table-layout: fixed;
+    border-spacing: 0;
+    flex: 1;
+}
+
+.tableDiv {
+    display: flex;
+    max-height: calc(100vh - 8.5rem);
+    overflow: auto;
+}
+
+.tableHeader th {
+    background-color: lightblue;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.tableBody > tr:nth-child(odd) {
+    background-color: white;
+    text-align: center;
+}
+
+.tableBody > tr:nth-child(even) {
+    background-color: lightcyan;
+    text-align: center;
+}
+
+.tableBody > tr > td {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.id {
+    width: 5rem;
+}
+
+.lname {
+    width: 10rem;
+}
+
+.fname {
+    width: 5rem;
+}
+
+.role {
+    width: 5rem;
+}
+
+.totalHours {
+    width: 5rem;
+}
+
 @media (prefers-color-scheme: dark) {
     .editDialog {
         background-color: black;
@@ -160,6 +213,18 @@
     }
     .buttonContainer > button {
         background-color: gray;
+    }
+
+    .tableHeader th {
+        background-color: #000137;
+    }
+    
+    .tableBody > tr:nth-child(odd) {
+        background-color: rgb(27, 30, 45);
+    }
+    
+    .tableBody > tr:nth-child(even) {
+        background-color: black;
     }
 }
 
@@ -215,3 +280,4 @@
         font-size: 1rem;
     }
 }
+

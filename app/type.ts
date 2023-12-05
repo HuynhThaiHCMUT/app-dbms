@@ -28,8 +28,8 @@ type Invoice = {
 }
 
 type Schedule = {
-    start: Date,
-    end: Date
+    startHour: Date,
+    endHour: Date
 }
 
 type StaffData = {
@@ -41,6 +41,14 @@ type StaffData = {
     phone: string,
     birthday: Date | string,
     //schedule: Schedule[]
+}
+
+type SumHoursStaffData = {
+    id: number,
+    fname: string,
+    lname: string,
+    role: string,
+    totalHours: number
 }
 
 type DatabaseResponse = {
