@@ -45,7 +45,7 @@ export default function Home() {
                             onClick={() => setTag(value)}>{value}</button>)}
                     </div>
                 </div>
-                <div className={styles.filterSection}>
+                {/* <div className={styles.filterSection}>
                     <h3>Sắp xếp sản phẩm</h3>
                     <div>
                     {sorts.map((value, index) => 
@@ -53,7 +53,7 @@ export default function Home() {
                             className={(sort == value) ? styles.activeBox : styles.filterBox}
                             onClick={() => setSort(value)}>{value}</button>)}
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
         <div className={styles.container}>

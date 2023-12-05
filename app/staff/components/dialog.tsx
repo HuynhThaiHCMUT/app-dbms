@@ -13,6 +13,10 @@ function parseInt(s: string): number {
     return (s === "") ? 0 : Number.parseInt(s);
 }
 
+function dateToISOString(date: Date) {
+    return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString();
+  }
+
 //TODO: Add view dialog, fix schedule view
 
 function AddDialog() {
@@ -23,8 +27,8 @@ function AddDialog() {
     const [role, setRole] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
-    const [birthday, setBirthday] = useState<Date>(new Date());
-    const [schedule, setSchedule] = useState<Schedule[]>([]);
+    const [birthday, setBirthday] = useState<Date | string>(new Date());
+    //const [schedule, setSchedule] = useState<Schedule[]>([]);
 
     const [confirmed, confirm] = useState(false);
     const [message, setMessage] = useState("");
@@ -37,7 +41,7 @@ function AddDialog() {
         setEmail("");
         setPhone("");
         setBirthday(new Date());
-        setSchedule([]);
+        //setSchedule([]);
     }, [showAddDialog])
 
     useEffect(() => {
@@ -66,8 +70,8 @@ function AddDialog() {
                 email: email,
                 phone: phone,
                 birthday: birthday,
-                schedule: schedule,
-            } 
+                //schedule: schedule,
+            }
             addStaff(req);
             confirm(false);
         }
@@ -106,8 +110,8 @@ function AddDialog() {
             <p>Ngày sinh</p>
             <FlatPickr
             value={birthday} 
-            onChange={([date]) => setBirthday(date)}/>
-            {schedule.map((value, index) => <div key={index} className={styles.scheduleContainer}>
+            onChange={([date]) => setBirthday(dateToISOString(date))}/>
+            {/* {schedule.map((value, index) => <div key={index} className={styles.scheduleContainer}>
             <div>
                 <p>Bắt đầu</p>
                 <FlatPickr data-enable-time
@@ -132,7 +136,7 @@ function AddDialog() {
             }])}>
                 <p>Thêm lịch làm việc</p>
                 <FontAwesomeIcon icon={faPlus}/>
-            </button>
+            </button> */}
             <div className={styles.buttonContainer}>
                 <button onClick={() => {
                     confirm(true);
@@ -151,8 +155,8 @@ function EditDialog() {
     const [role, setRole] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
-    const [birthday, setBirthday] = useState<Date>(new Date());
-    const [schedule, setSchedule] = useState<Schedule[]>([]);
+    const [birthday, setBirthday] = useState<Date | string>(new Date());
+    //const [schedule, setSchedule] = useState<Schedule[]>([]);
 
     const [confirmed, confirm] = useState(false);
     const [message, setMessage] = useState("");
@@ -165,7 +169,7 @@ function EditDialog() {
         setEmail(selectedStaff.email);
         setPhone(selectedStaff.phone);
         setBirthday(selectedStaff.birthday);
-        setSchedule(selectedStaff.schedule);
+        //setSchedule(selectedStaff.schedule);
     }, [showEditDialog])
 
     useEffect(() => {
@@ -185,6 +189,7 @@ function EditDialog() {
             }
         };
         if (confirmed) {
+            
             let req: StaffData = {
                 id: selectedStaff.id,
                 fname: fname,
@@ -193,8 +198,8 @@ function EditDialog() {
                 email: email,
                 phone: phone,
                 birthday: birthday,
-                schedule: schedule,
-            } 
+                //schedule: schedule,
+            }
             editStaff(req);
             confirm(false);
         }
@@ -229,11 +234,12 @@ function EditDialog() {
             <p>Số điện thoại</p>
             <input type='text'
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}/>\
+            onChange={(e) => setPhone(e.target.value)}/>
+            <p>Ngày sinh</p>
             <FlatPickr
             value={birthday} 
-            onChange={([date]) => setBirthday(date)}/>
-            {schedule.map((value, index) => <div key={index} className={styles.scheduleContainer}>
+            onChange={([date]) => setBirthday(dateToISOString(date))}/>
+            {/* {schedule.map((value, index) => <div key={index} className={styles.scheduleContainer}>
                 <div>
                     <p>Bắt đầu</p>
                     <FlatPickr value={value.start} 
@@ -254,8 +260,9 @@ function EditDialog() {
                 start: new Date(),
                 end: new Date(),
             }])}>
+                <p>Thêm lịch làm việc</p>
                 <FontAwesomeIcon icon={faPlus}/>
-            </button>
+            </button> */}
             <div className={styles.buttonContainer}>
                 <button onClick={() => {
                     confirm(true);

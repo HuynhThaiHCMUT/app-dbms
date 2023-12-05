@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import clientPromise from '../db';
+import { clientPromise, sql } from '../db';
 
 export async function GET(req: NextRequest) {
     const client = await clientPromise;
@@ -8,7 +8,8 @@ export async function GET(req: NextRequest) {
     const sort = req.nextUrl.searchParams.get("sort") ?? "";
 
     //TODO: Get product data from database
-
+    const request = client.request();
+    request.input("CategoryName", sql.NVarChar, "category")
     //return NextResponse.json(data);
 }
 

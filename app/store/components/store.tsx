@@ -52,22 +52,22 @@ export default function Store() {
                         <th className={styles.id}>ID</th>
                         <th className={styles.name}>Tên sản phẩm</th>
                         <th className={styles.quantity}>Số lượng</th>
+                        <th className={styles.basePrice}>Giá gốc</th>
                         <th className={styles.unitName}>Đơn vị</th>
                         <th className={styles.price}>Giá</th>
-                        <th className={styles.basePrice}>Giá gốc</th>
                         <th className={styles.weight}>Trọng số</th>
                         <th className={styles.action}></th>
                     </tr>
                 </thead>
                 <tbody className={styles.tableBody}>
                     {data.map((value: ProductData) => 
-                    <tr key={value._id}>
+                    <tr key={value.id}>
                         <td>{value.id}</td>
                         <td>{value.name}</td>
                         <td>{value.quantity}</td>
+                        <td>{value.basePrice}</td>
                         <td>{value.units.map((value, index) => <p key={index}>{value.name}</p>)}</td>
                         <td>{value.units.map((value, index) => <p key={index}>{value.price}</p>)}</td>
-                        <td>{value.units.map((value, index) => <p key={index}>{value.basePrice}</p>)}</td>
                         <td>{value.units.map((value, index) => <p key={index}>{value.weight}</p>)}</td>
                         <td>
                             <button onClick={() => editItem(value)}>

@@ -39,8 +39,8 @@ type StaffData = {
     role: string,
     email: string,
     phone: string,
-    birthday: Date,
-    schedule: Schedule[]
+    birthday: Date | string,
+    //schedule: Schedule[]
 }
 
 type DatabaseResponse = {

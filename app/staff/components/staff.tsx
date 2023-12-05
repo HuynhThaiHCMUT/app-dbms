@@ -55,8 +55,8 @@ export default function Staff() {
                 <thead className={styles.tableHeader}>
                     <tr>
                         <th className={styles.id}>ID</th>
-                        <th className={styles.fname}>Họ</th>
-                        <th className={styles.lname}>Tên</th>
+                        <th className={styles.lname}>Họ</th>
+                        <th className={styles.fname}>Tên</th>
                         <th className={styles.role}>Chức vụ</th>
                         <th className={styles.email}>Email</th>
                         <th className={styles.phone}>Số điện thoại</th>
@@ -68,12 +68,12 @@ export default function Staff() {
                     {data.map((value: StaffData) => 
                     <tr key={value.id}>
                         <td>{value.id}</td>
-                        <td>{value.fname}</td>
                         <td>{value.lname}</td>
+                        <td>{value.fname}</td>
                         <td>{value.role}</td>
                         <td>{value.email}</td>
                         <td>{value.phone}</td>
-                        <td>{value.birthday.toLocaleString()}</td>
+                        <td>{(new Date(Date.parse(value.birthday.toString()))).toLocaleDateString()}</td>
                         <td>
                             <button onClick={() => viewItem(value)}>
                                 <FontAwesomeIcon icon={faEye}/>

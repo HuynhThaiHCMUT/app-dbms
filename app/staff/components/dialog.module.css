@@ -14,12 +14,17 @@
     background-color: white;
     display: flex;
     flex-direction: column;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: flex-start;
     border-radius: 2rem;
     padding: 2rem;
     max-height: 95vh;
     overflow: scroll;
+}
+
+.editDialog > p {
+    max-width: 30rem;
+    text-wrap: wrap;
 }
 
 .editDialog > h2 {
