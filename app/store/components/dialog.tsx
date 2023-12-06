@@ -72,7 +72,7 @@ function AddDialog() {
             <input type='text'
             value={name}
             onChange={(e) => setName(e.target.value)}/>
-            <p>Mô tả sản phầm</p>
+            <p>Mô tả sản phẩm</p>
             <input type='text'
             value={desc}
             onChange={(e) => setDesc(e.target.value)}/>
@@ -216,7 +216,7 @@ function EditDialog() {
             <input type='text'
             value={name}
             onChange={(e) => setName(e.target.value)}/>
-            <p>Mô tả sản phầm</p>
+            <p>Mô tả sản phẩm</p>
             <input type='text'
             value={desc}
             onChange={(e) => setDesc(e.target.value)}/>
@@ -288,7 +288,7 @@ function DelDialog() {
 
     useEffect(() => {
         async function deleteProduct() {
-            let res = await fetch(`/api/product?d=${selectedProduct._id}`, {method: "DELETE"});
+            let res = await fetch(`/api/product?d=${selectedProduct.id}`, {method: "DELETE"});
             if (!res.ok) setMessage("Internal server error")
             else {
                 let dbres: DatabaseResponse = await res.json();

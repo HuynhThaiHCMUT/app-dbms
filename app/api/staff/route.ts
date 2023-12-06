@@ -5,7 +5,6 @@ export async function GET(req: NextRequest) {
     const client = await clientPromise;
     const query = req.nextUrl.searchParams.get("q") ?? "";
 
-    //TODO: Get employee data from database
     let data = (await client.query`SELECT e.uid AS id, position AS role, birthday, fname, lname, email, phone, status FROM Employee e, Store_user s WHERE e.uid = s.uid`).recordset;
     return NextResponse.json(data);
 }
@@ -14,17 +13,16 @@ export async function POST(req: NextRequest) {
     const client = await clientPromise;
     const staff: StaffData = await req.json();
 
-    //TODO: Insert new employee to database
-    const request = client.request()
-    request.input("lname", sql.NVarChar, staff.lname)
-    request.input("fname", sql.NVarChar, staff.fname)
-    request.input("email", sql.VarChar, staff.email)
-    request.input("phone", sql.VarChar, staff.phone)
-    request.input("position", sql.NVarChar, staff.role)
-    request.input("birthday", sql.Date, staff.birthday)
+    const request = client.request();
+    request.input("lname", sql.NVarChar, staff.lname);
+    request.input("fname", sql.NVarChar, staff.fname);
+    request.input("email", sql.VarChar, staff.email);
+    request.input("phone", sql.VarChar, staff.phone);
+    request.input("position", sql.NVarChar, staff.role);
+    request.input("birthday", sql.Date, staff.birthday);
 
     try {
-        await request.execute("InsertEmployee")
+        await request.execute("InsertEmployee");
     
         const response: DatabaseResponse = {
           success: true,
@@ -93,17 +91,17 @@ export async function PUT(req: NextRequest) {
     const client = await clientPromise;
     const staff: StaffData = await req.json();
 
-    const request = client.request()
-    request.input("uid", sql.Int, staff.id)
-    request.input("lname", sql.NVarChar, staff.lname)
-    request.input("fname", sql.NVarChar, staff.fname)
-    request.input("email", sql.VarChar, staff.email)
-    request.input("phone", sql.VarChar, staff.phone)
-    request.input("position", sql.NVarChar, staff.role)
-    request.input("birthday", sql.Date, staff.birthday)
+    const request = client.request();
+    request.input("uid", sql.Int, staff.id);
+    request.input("lname", sql.NVarChar, staff.lname);
+    request.input("fname", sql.NVarChar, staff.fname);
+    request.input("email", sql.VarChar, staff.email);
+    request.input("phone", sql.VarChar, staff.phone);
+    request.input("position", sql.NVarChar, staff.role);
+    request.input("birthday", sql.Date, staff.birthday);
 
     try {
-        await request.execute("UpdateEmployee")
+        await request.execute("UpdateEmployee");
 
         const response: DatabaseResponse = {
             success: true,
@@ -177,8 +175,8 @@ export async function DELETE(req: NextRequest) {
     const client = await clientPromise;
     const id = req.nextUrl.searchParams.get("d") ?? "";
 
-    const request = client.request()
-    request.input("uid", sql.Int, id)
+    const request = client.request();
+    request.input("uid", sql.Int, id);
 
     try {
         // Delete an employee from the database
