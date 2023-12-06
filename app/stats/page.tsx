@@ -16,7 +16,8 @@ export default function Statistic() {
 
     useEffect(() => {
         async function getData() {
-            let res = await fetch(`/api/stats?top=${top}&start=${start.getTime.toString()}&end=${end.getTime.toString()}`, {cache: "no-store"});
+            console.log(`/api/stats?top=${top}&start=${start.getTime().toString()}&end=${end.getTime().toString()}`);
+            let res = await fetch(`/api/stats?top=${top}&start=${start.getTime().toString()}&end=${end.getTime().toString()}`, {cache: "no-store"});
             if (res.ok) {
                 let products = await res.json();
                 setData(products);
@@ -31,11 +32,11 @@ export default function Statistic() {
         <div className={styles.inputContainer}>
             <div>
                 <p>Ngày bắt đầu</p>
-                <FlatPickr value={start} onChange={([date]) => setStart(date)}/>
+                <FlatPickr value={start} onChange={([date]) => setStart(new Date(date.getTime() - (date.getTimezoneOffset() * 60000)))}/>
             </div>
             <div>
                 <p>Ngày kết thúc</p>
-                <FlatPickr value={end} onChange={([date]) => setEnd(date)}/>
+                <FlatPickr value={end} onChange={([date]) => setEnd(new Date(date.getTime() - (date.getTimezoneOffset() * 60000)))}/>
             </div>
             <div>
                 <p>Top</p>
@@ -54,7 +55,7 @@ export default function Statistic() {
             {data.map((value, index) => <div key={index}>
                 <p>{index + 1}</p>
                 <p>{value.name}</p>
-                <p>{value.quantity}</p>
+                <p>{value.totalSold}</p>
             </div>)}
         </div>
     </div>

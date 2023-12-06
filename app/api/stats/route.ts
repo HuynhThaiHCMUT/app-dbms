@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { clientPromise } from '../db';
+import { clientPromise, sql } from '../db';
 
 export async function GET(req: NextRequest) {
     const client = await clientPromise;
@@ -8,7 +8,10 @@ export async function GET(req: NextRequest) {
     const end = req.nextUrl.searchParams.get("end") ?? "";
     const top = req.nextUrl.searchParams.get("top") ?? "";
 
-    //TODO: Get statistic from database
-
-    //return NextResponse.json(data);
+    const request = client.request();
+    request.input("topCount", sql.Int, parseInt(top));
+    request.input("startDate", sql.Date, new Date(parseInt(start)).toDateString())
+    request.input("endDate", sql.Date, new Date(parseInt(end)).toDateString())
+    const data = (await request.query("SELECT * FROM GetTopSellingProductsFunction(@topCount, @startDate, @endDate)")).recordset;
+    return NextResponse.json(data);
 }

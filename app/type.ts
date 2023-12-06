@@ -13,11 +13,15 @@ type UnconvertedUnit = {
 type ProductData = {
     id: number,
     name: string,
-    desc: string,
+    description: string,
     quantity: number,
     basePrice: number,
-    supplier: number,
-    units: Unit[]
+    status: string,
+}
+
+type Category = {
+    id: number,
+    name: string
 }
 
 type Invoice = {

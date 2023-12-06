@@ -15,8 +15,9 @@ function AddDialog() {
 
     const [id, setId] = useState("");
     const [name, setName] = useState("");
+    const [desc, setDesc] = useState("");
     const [quantity, setQuantity] = useState("");
-    const [units, setUnits] = useState<UnconvertedUnit[]>([]);
+    const [basePrice, setBasePrice] = useState("");
 
     const [confirmed, confirm] = useState(false);
     const [message, setMessage] = useState("");
@@ -24,17 +25,13 @@ function AddDialog() {
     useEffect(() => {
         setId("");
         setName("");
+        setDesc("");
         setQuantity("");
-        setUnits([{
-            name: "",
-            price: "",
-            basePrice: "",
-            weight: ""
-        }]);
+        setBasePrice("");
     }, [showAddDialog])
 
     useEffect(() => {
-        async function addProduct(req: NewProductData) {
+        async function addProduct(req: ProductData) {
             let res = await fetch(`/api/product`, {method: "POST", body: JSON.stringify(req)});
             if (!res.ok) setMessage("Internal server error")
             else {
@@ -50,18 +47,13 @@ function AddDialog() {
             }
         };
         if (confirmed) {
-            let req: NewProductData = {
+            let req: ProductData = {
                 id: parseInt(id),
                 name: name,
+                description: desc,
                 quantity: parseInt(quantity),
-                units: units.map((value) => {
-                    return {
-                        name: value.name,
-                        price: parseInt(value.price),
-                        basePrice: parseInt(value.basePrice),
-                        weight: parseInt(value.weight)
-                    }
-                })
+                status: (parseInt(quantity) > 0) ? "Còn hàng" : "Hết hàng",
+                basePrice: parseInt(basePrice)
             } 
             addProduct(req);
             confirm(false);
@@ -80,11 +72,21 @@ function AddDialog() {
             <input type='text'
             value={name}
             onChange={(e) => setName(e.target.value)}/>
+            <p>Mô tả sản phầm</p>
+            <input type='text'
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}/>
             <p>Số lượng</p>
             <input type='number'
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}/>
-            {units.map((value, index) => <div key={index} className={styles.unitContainer}>
+            <p>Trạng thái: {parseInt(quantity) > 0 ? "Còn hàng" : "Hết hàng"} </p>
+            <p></p>
+            <p>Giá gốc</p>
+            <input type='number'
+            value={basePrice}
+            onChange={(e) => setBasePrice(e.target.value)}/>
+            {/* {units.map((value, index) => <div key={index} className={styles.unitContainer}>
                 <div>
                     <p>Tên đơn vị</p>
                     <input type='text'
@@ -124,7 +126,7 @@ function AddDialog() {
                 weight: ""
             }])}>
                 <FontAwesomeIcon icon={faPlus}/>
-            </button>
+            </button> */}
             <div className={styles.buttonContainer}>
                 <button onClick={() => {
                     confirm(true);
@@ -137,15 +139,13 @@ function AddDialog() {
 
 function EditDialog() {
     const {selectedProduct, showEditDialog, setShowEditDialog, updated, update} = useContext(Context);
+    
     const [id, setId] = useState("");
     const [name, setName] = useState("");
+    const [desc, setDesc] = useState("");
     const [quantity, setQuantity] = useState("");
-    const [units, setUnits] = useState<UnconvertedUnit[]>([{
-        name: "",
-        price: "",
-        basePrice: "",
-        weight: ""
-    }]);
+    const [basePrice, setBasePrice] = useState("");
+
 
     const [confirmed, confirm] = useState(false);
     const [message, setMessage] = useState("");
@@ -153,19 +153,21 @@ function EditDialog() {
     useEffect(() => {
         setId(selectedProduct.id.toString());
         setName(selectedProduct.name);
+        setDesc(selectedProduct.desc)
         setQuantity(selectedProduct.quantity.toString());
-        setUnits(selectedProduct.units.map((value: Unit) => {
+        setBasePrice(selectedProduct.basePrice.toString())
+        /* setUnits(selectedProduct.units.map((value: Unit) => {
             return {
                 name: value.name,
                 price: value.price.toString(),
                 basePrice: value.basePrice.toString(),
                 weight: value.weight.toString()
             }
-        }));
+        })); */
     }, [showEditDialog])
 
     useEffect(() => {
-        async function editProduct(req: PutProductRequestBody) {
+        async function editProduct(req: ProductData) {
             let res = await fetch(`/api/product`, {method: "PUT", body: JSON.stringify(req)});
             if (!res.ok) setMessage("Internal server error")
             else {
@@ -181,21 +183,21 @@ function EditDialog() {
             }
         };
         if (confirmed) {
-            let req: PutProductRequestBody = {
-                key: selectedProduct._id,
-                body: {
-                    id: parseInt(id),
-                    name: name,
-                    quantity: parseInt(quantity),
-                    units: units.map((value) => {
-                        return {
-                            name: value.name,
-                            price: parseInt(value.price),
-                            basePrice: parseInt(value.basePrice),
-                            weight: parseInt(value.weight)
-                        }
-                    })
-                }
+            let req: ProductData = {
+                id: parseInt(id),
+                name: name,
+                description: desc,
+                quantity: parseInt(quantity),
+                status: (parseInt(quantity) > 0) ? "Còn hàng" : "Hết hàng",
+                basePrice: parseInt(basePrice)
+                /* units: units.map((value) => {
+                    return {
+                        name: value.name,
+                        price: parseInt(value.price),
+                        basePrice: parseInt(value.basePrice),
+                        weight: parseInt(value.weight)
+                    }
+                }) */
             } 
             editProduct(req);
             confirm(false);
@@ -214,11 +216,21 @@ function EditDialog() {
             <input type='text'
             value={name}
             onChange={(e) => setName(e.target.value)}/>
+            <p>Mô tả sản phầm</p>
+            <input type='text'
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}/>
             <p>Số lượng</p>
             <input type='number'
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}/>
-            {units.map((value, index) => <div key={index} className={styles.unitContainer}>
+            <p>Trạng thái: {parseInt(quantity) > 0 ? "Còn hàng" : "Hết hàng"} </p>
+            <p></p>
+            <p>Giá gốc</p>
+            <input type='number'
+            value={basePrice}
+            onChange={(e) => setBasePrice(e.target.value)}/>
+            {/* {units.map((value, index) => <div key={index} className={styles.unitContainer}>
                 <div>
                     <p>Tên đơn vị</p>
                     <input type='text'
@@ -258,7 +270,7 @@ function EditDialog() {
                 weight: ""
             }])}>
                 <FontAwesomeIcon icon={faPlus}/>
-            </button>
+            </button> */}
             <div className={styles.buttonContainer}>
                 <button onClick={() => {
                     confirm(true);
