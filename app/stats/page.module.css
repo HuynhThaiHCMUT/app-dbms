@@ -36,7 +36,7 @@
 .display {
     flex: 1;
     margin: 2rem 10rem 0rem 10rem;
-    background-color: #0e0e0e;
+    background-color: #bbbbbb;
     border-radius: 3rem;
     padding: 1rem 5rem 1rem 5rem;
     max-height: 50vh;
@@ -52,4 +52,10 @@
 
 .display > div > p {
     margin-right: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    .display {
+        background-color: #0e0e0e;
+    }
 }

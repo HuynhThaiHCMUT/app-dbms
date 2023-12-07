@@ -161,6 +161,18 @@
     .tableBody > tr:nth-child(even) {
         background-color: black;
     }
+    .filterHeader {
+        background-color: black;
+    }
+    .filterPanel {
+    background-color: gray;
+    }
+    .filterBox {
+    background-color: #000120;
+    }
+    .activeBox {
+    background-color: #000550;
+    }
 }
 
 .id {
