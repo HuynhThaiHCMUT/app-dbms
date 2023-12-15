@@ -11,7 +11,7 @@ export default function Statistic() {
     const [start, setStart] = useState(new Date());
     const [end, setEnd] = useState(new Date());
 
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<TopProductData[]>([]);
     const [updated, update] = useState(false);
 
     useEffect(() => {
@@ -19,7 +19,7 @@ export default function Statistic() {
             console.log(`/api/stats?top=${top}&start=${start.getTime().toString()}&end=${end.getTime().toString()}`);
             let res = await fetch(`/api/stats?top=${top}&start=${start.getTime().toString()}&end=${end.getTime().toString()}`, {cache: "no-store"});
             if (res.ok) {
-                let products = await res.json();
+                let products: TopProductData[] = await res.json();
                 setData(products);
             }
             else console.log("Failed to fetch data");

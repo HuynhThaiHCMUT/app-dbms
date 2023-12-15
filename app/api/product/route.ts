@@ -3,11 +3,9 @@ import { clientPromise, sql } from '../db';
 
 export async function GET(req: NextRequest) {
     const client = await clientPromise;
-    
-    const request = client.request();
 
     if (req.nextUrl.searchParams.has("getCategory")) {
-        const data = (await request.query("SELECT cid AS id, name FROM Category")).recordset
+        const data = (await client.query("SELECT cid AS id, name FROM Category"))[0];
 
         return NextResponse.json(data);
     }
@@ -16,13 +14,12 @@ export async function GET(req: NextRequest) {
         const category = req.nextUrl.searchParams.get("tag") ?? "";
         const sort = req.nextUrl.searchParams.get("sort") ?? "";
 
-        request.input("categoryName", sql.NVarChar, category);
-
-        let data;
+        let data: any[];
         if (category == "Tất cả") {
-            data = (await request.query("SELECT pid AS id, name, base_price AS basePrice, description, quantity, status FROM Product")).recordset;
+            data = (await client.execute("SELECT pid AS id, name, base_price AS basePrice, description, quantity, status FROM Product"))[0] as any[];
         } else {
-            data = (await request.execute("SearchProductsByCategory")).recordset;
+            data = (await client.execute("CALL SearchProductsByCategory(?)", [category]))[0] as any[];
+            data = data[0];
         }
         const filtered = data.filter((value) => (value.name.match(new RegExp(query, "i")) != null))
         return NextResponse.json(filtered);
@@ -33,16 +30,8 @@ export async function POST(req: NextRequest) {
     const client = await clientPromise;
     const p: ProductData = await req.json();
 
-    const request = client.request();
-    request.input("id", sql.Int, p.id);
-    request.input("name", sql.NVarChar, p.name);
-    request.input("description", sql.NVarChar, p.description);
-    request.input("quantity", sql.Int, p.quantity);
-    request.input("status", sql.NVarChar, p.status);
-    request.input("basePrice", sql.Int, p.basePrice)
-
     try {
-        await request.execute("InsertProduct");
+        await client.execute("CALL InsertProduct(?, ?, ?, ?, ?, ?)", [p.id, p.name, p.description, p.quantity, p.status, p.basePrice]);
     
         const response: DatabaseResponse = {
           success: true,
@@ -51,43 +40,14 @@ export async function POST(req: NextRequest) {
     
         return NextResponse.json(response);
     } catch (error: any) {
-        let errorMessage = 'Insert failed. ';
+        // Log the entire error for debugging
         console.error(error);
-        // Check the error details to provide more specific messages
-        if (error.number) {
-          // SQL Server error number
-            switch (error.number) {
-                case 51001:
-                    errorMessage += 'Error: ID cannot be NULL or an existing value.';
-                    break;
-                case 51002:
-                    errorMessage += 'Error: Name cannot be NULL.';
-                    break;
-                case 51003:
-                    errorMessage += 'Error: Name exceeds the maximum length of 50 characters.';
-                    break;
-                case 51004:
-                    errorMessage += 'Error: Description exceeds the maximum length of 100 characters.';
-                    break;
-                case 51005:
-                    errorMessage += 'Error: Status exceeds the maximum length of 20 characters.';
-                    break;
-                case 51006:
-                    errorMessage += 'Error: Quantity cannot be NULL.';
-                    break;
-                case 51007:
-                    errorMessage += 'Error: Base price cannot be NULL.';
-                    break;
-                default:
-                    break;
-            }
-        }
-    
+
         const response: DatabaseResponse = {
             success: false,
-            message: errorMessage,
+            message: error.sqlMessage,
         };
-    
+
         return NextResponse.json(response);
     }
 }
@@ -95,17 +55,9 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
     const client = await clientPromise;
     const p: ProductData = await req.json();
-    
-    const request = client.request();
-    request.input("id", sql.Int, p.id);
-    request.input("name", sql.NVarChar, p.name);
-    request.input("description", sql.NVarChar, p.description);
-    request.input("quantity", sql.Int, p.quantity);
-    request.input("status", sql.NVarChar, p.status);
-    request.input("basePrice", sql.Int, p.basePrice)
 
     try {
-        await request.execute("UpdateProduct");
+        await client.execute("CALL UpdateProduct(?, ?, ?, ?, ?, ?)", [p.id, p.name, p.description, p.quantity, p.status, p.basePrice]);
     
         const response: DatabaseResponse = {
           success: true,
@@ -114,43 +66,14 @@ export async function PUT(req: NextRequest) {
     
         return NextResponse.json(response);
     } catch (error: any) {
-        let errorMessage = 'Update failed. ';
+        // Log the entire error for debugging
         console.error(error);
-        // Check the error details to provide more specific messages
-        if (error.number) {
-          // SQL Server error number
-            switch (error.number) {
-                case 51001:
-                    errorMessage += 'Error: ID cannot be NULL or a non-existing value.';
-                    break;
-                case 51002:
-                    errorMessage += 'Error: Name cannot be NULL.';
-                    break;
-                case 51003:
-                    errorMessage += 'Error: Name exceeds the maximum length of 50 characters.';
-                    break;
-                case 51004:
-                    errorMessage += 'Error: Description exceeds the maximum length of 100 characters.';
-                    break;
-                case 51005:
-                    errorMessage += 'Error: Status exceeds the maximum length of 20 characters.';
-                    break;
-                case 51006:
-                    errorMessage += 'Error: Quantity cannot be NULL.';
-                    break;
-                case 51007:
-                    errorMessage += 'Error: Base price cannot be NULL.';
-                    break;
-                default:
-                    break;
-            }
-        }
-    
+
         const response: DatabaseResponse = {
             success: false,
-            message: errorMessage,
+            message: error.sqlMessage,
         };
-    
+
         return NextResponse.json(response);
     }
 }
@@ -159,12 +82,9 @@ export async function DELETE(req: NextRequest) {
     const client = await clientPromise;
     const id = req.nextUrl.searchParams.get("d") ?? "";
 
-    const request = client.request();
-    request.input("id", sql.Int, id);
-
     try {
         // Delete an employee from the database
-        await request.execute("DeleteProduct");
+        await client.execute("CALL DeleteProduct(?)", [parseInt(id)]);
 
         const response: DatabaseResponse = {
             success: true,
@@ -173,29 +93,12 @@ export async function DELETE(req: NextRequest) {
 
         return NextResponse.json(response);
     } catch (error: any) {
-        let errorMessage = 'Delete failed. ';
-
         // Log the entire error for debugging
         console.error(error);
 
-        // Check the error details to provide more specific messages
-        if (error.number) {
-            // SQL Server error number
-            switch (error.number) {
-                case 53000:
-                    errorMessage += 'Error: Product with the specified PID does not exist.';
-                    break;
-                case 53001:
-                    errorMessage += 'Error: Cannot delete product. Related records exist in other tables: Unit.';
-                    break; 
-                default:
-                    break;
-            }
-        }
-
         const response: DatabaseResponse = {
             success: false,
-            message: errorMessage,
+            message: error.sqlMessage,
         };
 
         return NextResponse.json(response);

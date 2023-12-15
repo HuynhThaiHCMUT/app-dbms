@@ -153,9 +153,9 @@ function EditDialog() {
     useEffect(() => {
         setId(selectedProduct.id.toString());
         setName(selectedProduct.name);
-        setDesc(selectedProduct.desc)
+        setDesc(selectedProduct.description);
         setQuantity(selectedProduct.quantity.toString());
-        setBasePrice(selectedProduct.basePrice.toString())
+        setBasePrice(selectedProduct.basePrice.toString());
         /* setUnits(selectedProduct.units.map((value: Unit) => {
             return {
                 name: value.name,

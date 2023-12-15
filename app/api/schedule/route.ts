@@ -5,19 +5,29 @@ export async function GET(req: NextRequest) {
     const client = await clientPromise;
 
     //TODO: Get employee data from database
-    const request = client.request();
 
     if (req.nextUrl.searchParams.has("start") && req.nextUrl.searchParams.has("end")) {
-        const start = req.nextUrl.searchParams.get("start");
-        const end = req.nextUrl.searchParams.get("end");
-        request.input("StartDate", sql.Date, start);
-        request.input("EndDate", sql.Date, end);
-        const data = (await request.execute("GetTotalWorkingHours")).recordset;
-        return NextResponse.json(data);
+        const start = req.nextUrl.searchParams.get("start") ?? "";
+        const end = req.nextUrl.searchParams.get("end") ?? "";
+        try {
+            let data = (await client.execute("CALL GetTotalWorkingHours(?, ?)", [new Date(start), new Date(end)]))[0] as TotalWorkingHoursData[];
+            return NextResponse.json(data[0]);
+        }
+        catch (error: any) {
+            // Log the entire error for debugging
+            console.error(error);
+
+            const response: DatabaseResponse = {
+                success: false,
+                message: error.sqlMessage,
+            };
+
+            return NextResponse.json(response);
+        }
+        
     } else {
         const id = req.nextUrl.searchParams.get("id") ?? "-1";
-        request.input("id", sql.Int, parseInt(id));
-        const data = (await request.query("SELECT start_hour AS startHour, end_hour AS endHour FROM Working_schedule WHERE uid = @id")).recordset;
+        const data = (await client.execute("SELECT start_hour AS startHour, end_hour AS endHour FROM Working_schedule WHERE uid = ?", [parseInt(id)]))[0];
         return NextResponse.json(data);
     }
 }
@@ -26,10 +36,9 @@ export async function POST(req: NextRequest) {
     const client = await clientPromise;
 
     //TODO: Insert new employee to database
-    const request = client.request()
 
     try {
-        await request.execute("")
+        await client.execute("")
     
         const response: DatabaseResponse = {
           success: true,
@@ -54,11 +63,8 @@ export async function PUT(req: NextRequest) {
     const client = await clientPromise;
     const staff: StaffData = await req.json();
 
-    const request = client.request()
-    
-
     try {
-        await request.execute("")
+        await client.execute("")
 
         const response: DatabaseResponse = {
             success: true,
@@ -84,11 +90,9 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
     const client = await clientPromise;
 
-    const request = client.request()
-
     try {
         // Delete an employee from the database
-        await request.execute("");
+        await client.execute("");
 
         const response: DatabaseResponse = {
             success: true,

@@ -8,6 +8,7 @@ import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import FlatPickr from 'react-flatpickr'
 
 import 'flatpickr/dist/themes/light.css';
+import { type } from 'os';
 
 function parseInt(s: string): number {
     return (s === "") ? 0 : Number.parseInt(s);
@@ -21,14 +22,21 @@ function SumDialog() {
     const {showSumDialog, setShowSumDialog, updated, update} = useContext(Context);
     const [start, setStart] = useState<Date | string>(new Date())
     const [end, setEnd] = useState<Date | string>(new Date())
-    const [data, setData] = useState<SumHoursStaffData[]>([]);
+    const [data, setData] = useState<TotalWorkingHoursData[]>([]);
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         async function getData() {
             let res = await fetch(`/api/schedule?start=${start}&end=${end}`);
             if (res.ok) {
                 let list = await res.json();
-                setData(list);
+
+                if (message in list) {
+                    setMessage(list.message);
+                } else {
+                    setData(list);
+                    console.log(list);
+                }
             }
             else console.log("Failed to fetch data");
         };
@@ -38,6 +46,7 @@ function SumDialog() {
     return <div className={showSumDialog ? styles.dialogBackground : styles.hidden} onMouseDown={() => setShowSumDialog(false)}>
         <div className={styles.editDialog} onMouseDown={(e) => e.stopPropagation()}>
             <h2>Tính tổng giờ làm của nhân viên</h2>
+            <p className={styles.message}>{message}</p>
             <div className={styles.scheduleContainer}>
                 <div>
                     <p>Từ ngày</p>
@@ -64,7 +73,7 @@ function SumDialog() {
                         </tr>
                     </thead>
                     <tbody className={styles.tableBody}>
-                        {data.map((value: SumHoursStaffData) => 
+                        {data.map((value: TotalWorkingHoursData) => 
                         <tr key={value.id}>
                             <td>{value.id}</td>
                             <td>{value.lname}</td>
@@ -219,7 +228,7 @@ function AddDialog() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}/>
             <p>Số điện thoại</p>
-            <input type='text'
+            <input type='number'
             value={phone}
             onChange={(e) => setPhone(e.target.value)}/>
             <p>Ngày sinh</p>

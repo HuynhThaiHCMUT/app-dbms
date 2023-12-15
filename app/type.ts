@@ -47,12 +47,18 @@ type StaffData = {
     //schedule: Schedule[]
 }
 
-type SumHoursStaffData = {
+type TotalWorkingHoursData = {
     id: number,
     fname: string,
     lname: string,
     role: string,
     totalHours: number
+}
+
+type TopProductData = {
+    id: number,
+    name: string,
+    totalSold: number
 }
 
 type DatabaseResponse = {
